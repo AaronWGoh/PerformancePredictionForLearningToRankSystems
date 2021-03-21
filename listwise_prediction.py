@@ -4,19 +4,24 @@ import sys
 import time
 from itertools import chain, repeat, islice
 from optparse import OptionParser
+from io import StringIO
+# from torch.utils.data import DataLoader
 
 import lightgbm as lgb
 import numpy as np
-import torch
-import torch.nn as nn
-import torch.optim as optim
+# import torch
+# import torch.nn as nn
+# import torch.optim as optim
+import joblib
 
-from joblib import dump, load
+import kerastuner as kt
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.layers import Dense, Lambda, dot, Activation, concatenate
 from torch.utils.data import TensorDataset
+from sklearn.model_selection import PredefinedSplit
+import sklearn
 
 from kerastuner.tuners import RandomSearch, Hyperband
 from kerastuner import HyperParameters
@@ -38,10 +43,6 @@ import math
 
 np.set_printoptions(threshold=sys.maxsize)
 torch.set_printoptions(threshold=1000, precision=5)
-
-import sys
-from io import StringIO
-from torch.utils.data import DataLoader
 
 
 class redirected_stdout:
@@ -80,6 +81,7 @@ def timeit(method):
 def attention_3d_block(hidden_states, dense_layer_size):
     """
     Many-to-one attention mechanism for Keras.
+    @param dense_layer_size: layer size for the attention vector output
     @param hidden_states: 3D tensor with shape (batch_size, time_steps, input_dim).
     @return: 2D tensor with shape (batch_size, dense_layer_size)
     """
@@ -97,7 +99,8 @@ def attention_3d_block(hidden_states, dense_layer_size):
     # (batch_size, time_steps, hidden_size) dot (batch_size, time_steps) => (batch_size, hidden_size)
     context_vector = dot([hidden_states, attention_weights], [1, 1], name='context_vector')
     pre_activation = concatenate([context_vector, h_t], name='attention_output')
-    attention_vector = Dense(dense_layer_size, use_bias=False, activation='tanh', name='attention_vector')(pre_activation)
+    attention_vector = Dense(dense_layer_size, use_bias=False, activation='tanh', name='attention_vector')(
+        pre_activation)
     return attention_vector
 
 
@@ -250,7 +253,7 @@ def return_data(dense_feature_filename, predict_filename, eval_metrics=None, n=1
 
 # noinspection PyPep8Naming
 @timeit
-def write_data_to_file(x_nested, y_nested_by_metric, x_output_file, y_output_file):
+def write_data_to_file(x_nested, y_nested_by_metric, x_output_file, y_output_file, n=10):
     """
     Writes out the data to the two files
 
@@ -278,7 +281,7 @@ def write_data_to_file(x_nested, y_nested_by_metric, x_output_file, y_output_fil
         y_output_file = y_output_file[:-4]
 
     for key in y_nested_by_metric.keys():
-        file_end = "_" + key + ".txt"
+        file_end = "_" + key + "_at_" + str(n) + ".txt"
         y_writers[key] = open(y_output_file + file_end, "w")
 
     count, num_docs = len(x_nested), 0
@@ -301,7 +304,7 @@ def write_data_to_file(x_nested, y_nested_by_metric, x_output_file, y_output_fil
 
 
 @timeit
-def read_data_from_file(x_input_file, y_input_file, eval_metrics=None):
+def read_data_from_file(x_input_file, y_input_file, eval_metrics=None, k=10):
     """
     Reads data from file created in method write_data_to_file
 
@@ -335,7 +338,7 @@ def read_data_from_file(x_input_file, y_input_file, eval_metrics=None):
     if y_input_file[-4:] == '.txt':
         y_input_file = y_input_file[:-4]
     for eval_metric in eval_metrics:
-        end_file = "_" + eval_metric + ".txt"
+        end_file = "_" + eval_metric + "_at_" + str(k) + ".txt"
         print("Y FILE DIR READ:", y_input_file + end_file)
         y_readers[eval_metric] = open(y_input_file + end_file, "r")
         y_nested[eval_metric] = {}
@@ -448,7 +451,7 @@ def _append_one_hot_encode(x, train_orig_length):
 @timeit
 def _evaluate_model(x_test, y_test, model, listwise_metric, verbose=True, filewrite=True,
                     dir='model_outputs', filename='model_output', loss=None, scores=None, results=None,
-                    cluster_num=None):
+                    cluster_num=None, non_keras=False):
     _confirm_file_exists(dir)
     _confirm_file_exists(dir + '/' + filename)
     if scores is None:
@@ -458,15 +461,18 @@ def _evaluate_model(x_test, y_test, model, listwise_metric, verbose=True, filewr
     predictions = []
     has_metric = True
     for index, result in enumerate(results):
-        y_pred = result[0]
+        if isinstance(result, (list, np.ndarray)):
+            y_pred = result[0]
+        else:
+            y_pred = result
         if np.isinf(y_pred) or np.isnan(y_pred):
             has_metric = False
-        predictions.append(result[0])
+        predictions.append(y_pred)
 
     predictions = np.array(predictions).flatten()
     model_name = filename.split('_')[0]
     if verbose:
-        if model:
+        if model and not non_keras:
             print(model.metrics_names)
         if scores != -1:
             print(scores)
@@ -486,7 +492,7 @@ def _evaluate_model(x_test, y_test, model, listwise_metric, verbose=True, filewr
                 print("Std Y_test:\t{}".format(np.std(y_test)), file=text_file)
             else:
                 print("LISTWISE METRIC:\t" + listwise_metric, file=text_file)
-            if model:
+            if model and not non_keras:
                 for i in range(len(model.metrics_names)):
                     if model.metrics_names[i] != 'loss' and scores != -1:
                         print(model.metrics_names[i] + ":\t{}".format(scores[i]), file=text_file)
@@ -519,107 +525,93 @@ def custom_asymmetric_valid(y_true, y_pred):
     return "custom_asymmetric_eval", np.mean(loss), False
 
 
-def _light_gbm_parameter_tuning(x_train, y_train, x_valid, y_valid, filename):
-    param_test = {'num_leaves': sp_randint(6, 50),
-                  'min_child_samples': sp_randint(100, 500),
-                  'min_child_weight': [1e-5, 1e-3, 1e-2, 1e-1, 1],
-                  'max_depth': sp_randint(6, 100),
-                  'subsample': sp_uniform(loc=0.2, scale=0.8),
-                  'colsample_bytree': sp_uniform(loc=0.4, scale=0.6),
-                  'reg_alpha': [0, 1e-1, 1, 2, 5, 7, 10, 50, 100],
-                  'reg_lambda': [0, 1e-1, 1, 5, 10, 20, 50, 100]}
-    fit_params = {"early_stopping_rounds": 3,
-                  "eval_set": [(x_valid, y_valid)]}
-    lgb_model = lgb.LGBMRegressor()
-    gs = HyperbandSearchCV(
-        estimator=lgb_model,
-        param_distributions=param_test,
-        scoring='neg_mean_squared_error',
-        refit=True,
-        random_state=314,
-        verbose=True)
-    gs.fit(x_train, y_train, **fit_params)
-    print('Best score reached: {} with params: {} '.format(gs.best_score_, gs.best_params_))
-    with open(filename) as text_file:
-        print('Best score reached: {} with params: {} '.format(gs.best_score_, gs.best_params_), file=text_file)
-        print()
-    opt_parameters = gs.best_params_
-    new_model = lgb.LGBMRegressor(**clf.get_params())
-    new_model.set_params(**opt_parameters)
-
-    return new_model
+def _light_gbm_parameter_tuning(hp):
+    lgb_model = lgb.LGBMRegressor(num_leaves=hp.Int('num_leaves', min_value=6, max_value=50, step=4),
+                                  min_child_samples=hp.Int('min_child_samples', min_value=100, max_value=500, step=20),
+                                  min_child_weight=hp.Choice('min_child_weight', values=[1e-5, 1e-3, 1e-2, 1e-1, 1.]),
+                                  max_depth=hp.Int('max_depth', min_value=10, max_value=100, step=10),
+                                  reg_alpha=hp.Choice('reg_alpha', values=[1e-5, 1e-3, 1e-2, 1e-1, 0., 1.]),
+                                  reg_lambda=hp.Choice('reg_alpha', values=[1e-5, 1e-3, 1e-2, 1e-1, 0., 1.]))
+    return lgb_model
 
 
 @timeit
 def light_gbm_model(x_train_nested, y_train_nested, x_test_nested, y_test_nested, x_valid_nested, y_valid_nested,
                     total_num_features_per_row, listwise_metric, loss='mse', metrics=None, verbose=True,
-                    filewrite=True, dir='model_outputs'):
+                    dir='model_outputs', operational_dir='operations'):
     if metrics is None:
         metrics = ['mean_squared_error', 'kullback_leibler']
     print("LISTWISE METRIC", listwise_metric)
     flattened_X_train = pad_and_flatten_data(x_train_nested, total_num_features_per_row)
     flattened_X_test = pad_and_flatten_data(x_test_nested, total_num_features_per_row)
-    flattened_X_val = pad_and_flatten_data(x_valid_nested, total_num_features_per_row)
+    print("LIGHT GBM X_TRAIN", flattened_X_train.shape)
+    print("LIGHT GBM X_TEST SHAPE", flattened_X_test.shape)
     y_train = np.array([value for value in y_train_nested.values()])
     y_test = np.array([value for value in y_test_nested.values()])
-    y_val = np.array([value for value in y_valid_nested.values()])
-    # train_data = lgb.Dataset(flattend_X_train, label=y_train_list)
-    # train_data.create_valid(flattened_X_val, label=y_val_list)
 
-    # model = lgb.LGBMRegressor()
-    filename = 'light_gbm_' + loss
+    model_name = 'light_gbm_'
     try:
-        model = load(open(dir + '/models/' + 'light_gbm_' + loss + '_' + listwise_metric + '.h5'), 'rb')
-    except (OSError, IOError):
-        model = _light_gbm_parameter_tuning(flattened_X_train, y_train, flattened_X_val, y_val,
-                                            dir + '/' + filename + '.txt')
-        model.fit(flattened_X_train, y_train, eval_set=[(flattened_X_val, y_val)], epochs=20)
-        dump(model, open(dir + '/models/' + 'light_gbm_' + loss + '_' + listwise_metric + '.h5', 'wb'))
+        print("ATTEMPTS TO LOAD MODEL")
+        model = joblib.load(operational_dir + '/models/' + 'light_gbm_' + loss + '_' + listwise_metric + '.h5')
+    except (OSError, IOError, EOFError):
+        print("FAILS TO LOAD MODEL")
+        hp = HyperParameters()
+        hp.Choice('total_num_features_per_row', values=[total_num_features_per_row])
+        hp.Choice('loss', values=[loss])
+        flattened_X_valid = pad_and_flatten_data(x_valid_nested, total_num_features_per_row)
+        y_valid = np.array([value for value in y_valid_nested.values()])
 
-    y_pred = model.predict(flattened_X_test)
-    predictions = []
-    has_metric = True
-    for index, y_pred_val in enumerate(y_pred):
-        predictions.append(y_pred_val)
-        if np.isinf(y_pred_val) or np.isnan(y_pred_val):
-            has_metric = False
+        X_combined = np.append(flattened_X_train, flattened_X_valid, 0)
+        y_combined = np.append(y_train, y_valid, 0)
+        print("X COMB SHAPE", X_combined.shape)
+        print("Y COMB SHAPE", y_combined.shape)
+        combined_indices = [0 for _ in range(flattened_X_train.shape[0])]
+        valid_indices = [1 for _ in range(flattened_X_valid.shape[0])]
+        combined_indices.extend(valid_indices)
+        tuner = kt.tuners.Sklearn(
+            oracle=kt.oracles.Hyperband(
+                hyperparameters=hp,
+                objective=kt.Objective('score', direction='min'),
+                max_epochs=20,
+                factor=3),
+            cv=PredefinedSplit(combined_indices),
+            scoring=sklearn.metrics.make_scorer(mean_squared_error),
+            hypermodel=_light_gbm_parameter_tuning,
+            directory=operational_dir + '/hyperparameter_tuning',
+            project_name=model_name + listwise_metric + '_' + loss + '_project',
+            overwrite=False)
+        tuner.search(X_combined, y_combined)
+        model = tuner.get_best_models(num_models=1)[0]
+        filename = dir + '/hyperparameter_tuning/' + model_name + listwise_metric + '_' + loss + '_file.txt'
+        _confirm_file_exists(filename)
+        with open(filename, "w") as text_file:
+            print("Results:", file=text_file)
+            with redirected_stdout() as out:
+                tuner.results_summary()
+                result = out.string
+            print(result, file=text_file)
+            print('\n', file=text_file)
 
-    calculate_based_on_cluster(flattened_X_test, y_test, np.array(predictions), listwise_metric, 'light_gbm', loss,
+        print()
+        print(model_name + listwise_metric + '_' + loss)
+        print("Hyperparam Results:")
+        tuner.results_summary()
+        print()
+        joblib.dump(model, operational_dir + '/models/' + model_name + loss + '_' + listwise_metric + '.h5')
+
+    results = np.array(model.predict(flattened_X_test))
+    calculate_based_on_cluster(flattened_X_test, y_test, results, listwise_metric, 'light_gbm', loss,
                                dir=dir)
-    mean_squared_error = mse_metric.MeanSquaredError()
-    mean_squared_error_res = mean_squared_error(y_pred, y_test)
-    kl_div = kldiv_metric.KLDivergence()
-    kl_div_res = kl_div(y_pred, y_test)
-    if verbose:
-        print(['mse', 'kl divergence'])
-        print([mean_squared_error_res, kl_div_res])
-        print("RESULTS:")
-        print(predictions[:10])
-        # print("MEAN SQUARED ERROR:", test_acc)
-        # print("LOSS:", test_loss)
-    if loss == 'mse':
-        dir += '/mse'
-
-    if filewrite:
-        with open(dir + '/' + filename + '.txt', "a+") as text_file:
-            print(dir + '/' + filename)
-            print("LISTWISE:\t{}".format(listwise_metric), file=text_file)
-            print("mean_squared_error:\t{}".format(mean_squared_error_res), file=text_file)
-            print("kullback_leibler_divergence:\t{}".format(kl_div_res), file=text_file)
-            if has_metric:
-                r2_res = r2_score(y_test, predictions)
-                if r2_res == 0:
-                    print("Y_TEST", y_test)
-                    print("PREDICTIONS", predictions)
-                print("R2 Score:\t{}".format(r2_res), file=text_file)
-                print("RMSE:\t{}".format(math.sqrt(mean_squared_error(y_test, predictions))), file=text_file)
-                print("MAE:\t{}".format(math.sqrt(mean_absolute_error(y_test, predictions))), file=text_file)
-            print("\n", file=text_file)
+    _evaluate_model(flattened_X_test, y_test, model, listwise_metric,
+                    filename=model_name + loss,
+                    loss=loss, verbose=verbose, dir=dir,
+                    results=results, scores=-1, non_keras=True)
 
 
 @timeit
 def feed_forward_model(x_train_nested, y_train_nested, x_test_nested, y_test_nested, x_valid_nested, y_valid_nested,
-                       total_num_features_per_row, listwise_metric, losses=None, metrics=None, dir='model_outputs'):
+                       total_num_features_per_row, listwise_metric, losses=None, metrics=None, dir='model_outputs',
+                       operational_dir='operations'):
     if losses is None:
         losses = ['mse', 'kullback_leibler_divergence']
     if metrics is None:
@@ -648,7 +640,7 @@ def feed_forward_model(x_train_nested, y_train_nested, x_test_nested, y_test_nes
                             total_num_features_per_row,
                             listwise_metric,
                             loss=loss, metrics=metrics,
-                            dir=dir)
+                            dir=dir, operational_dir=operational_dir)
         print("--------------END LOSS", loss + "---------------------")
 
 
@@ -696,11 +688,13 @@ def _feed_forward_model_tuning(hp):
 @timeit
 def _feed_forward_model(flattened_X_train, y_train, flattened_X_test, y_test,
                         flattened_X_valid, y_valid, total_num_features_per_row, listwise_metric,
-                        verbose=True, loss='mse', metrics=None, dir='model_outputs'):
+                        verbose=True, loss='mse', metrics=None, dir='model_outputs',
+                        operational_dir='operations'):
     if metrics is None:
         metrics = ['mean_squared_error', 'kullback_leibler_divergence']
     try:
-        model = tf.keras.models.load_model(dir + '/models/feedforward_' + loss + '_' + listwise_metric + '.h5')
+        model = tf.keras.models.load_model(
+            operational_dir + '/models/feedforward_' + loss + '_' + listwise_metric + '.h5')
         model.summary()
     except (OSError, IOError):
         hp = HyperParameters()
@@ -713,7 +707,7 @@ def _feed_forward_model(flattened_X_train, y_train, flattened_X_test, y_test,
             max_epochs=20,
             factor=3,
             executions_per_trial=1,
-            directory=dir + '/hyperparameter_tuning',
+            directory=operational_dir + '/hyperparameter_tuning',
             project_name='feedforward_' + listwise_metric + '_' + loss + '_project',
             overwrite=False)
         stop_early = tf.keras.callbacks.EarlyStopping(monitor='val_mean_squared_error', patience=3)
@@ -744,7 +738,7 @@ def _feed_forward_model(flattened_X_train, y_train, flattened_X_test, y_test,
         print("Hyperparam Results:")
         tuner.results_summary()
         print()
-        model.save(dir + '/models/feedforward_' + loss + '_' + listwise_metric + '.h5')
+        model.save(operational_dir + '/models/feedforward_' + loss + '_' + listwise_metric + '.h5')
 
     results = model.predict(flattened_X_test)
     _evaluate_model(flattened_X_test, y_test, model, listwise_metric,
@@ -760,7 +754,7 @@ def _feed_forward_model(flattened_X_train, y_train, flattened_X_test, y_test,
 @timeit
 def lstm_model(X_train_nested, y_train_nested, X_test_nested, y_test_nested, X_valid_nested, y_valid_nested,
                max_number_document_on_query, listwise_metric, reverse=True, losses=None, metrics=None,
-               dir='model_outputs', with_attention=False):
+               dir='model_outputs', with_attention=False, operational_dir='operations'):
     if losses is None:
         losses = ['mse', 'kullback_leibler_divergence']
     if metrics is None:
@@ -788,7 +782,7 @@ def lstm_model(X_train_nested, y_train_nested, X_test_nested, y_test_nested, X_v
     for loss in losses:
         print("--------------START LOSS", loss + "---------------------")
         _lstm_model(X_train, y_train_list, X_test, y_test_list, X_valid, y_valid_list, listwise_metric,
-                    loss=loss, metrics=metrics, dir=dir, with_attention=with_attention)
+                    loss=loss, metrics=metrics, dir=dir, with_attention=with_attention, operational_dir=operational_dir)
         print("--------------END LOSS", loss + "---------------------")
 
 
@@ -826,8 +820,8 @@ def _lstm_model_with_attention_tuning(hp):
                            max_value=768,
                            step=64), return_sequences=True, input_shape=input_shape, name='lstm_2')(x)
     x = attention_3d_block(x, hp.Int('output_dense_size', min_value=32,
-                           max_value=768,
-                           step=64))
+                                     max_value=768,
+                                     step=64))
     x = layers.Dense(1, name='dense_1',
                      activation=hp.Choice('final_activation', values=['softmax', 'relu', 'sigmoid']))(x)
     model = tf.keras.Model(inputs=[i], outputs=[x])
@@ -861,7 +855,7 @@ def _lstm_model_with_attention_tuning(hp):
 #           validation_data=(X_valid, y_valid))
 @timeit
 def _lstm_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_metric, verbose=True,
-                loss='mse', metrics=None, dir='model_outputs', with_attention=False):
+                loss='mse', metrics=None, dir='model_outputs', with_attention=False, operational_dir='operational'):
     if metrics is None:
         metrics = ['mean_squared_error', 'kullback_leibler_divergence']
     if with_attention:
@@ -869,7 +863,8 @@ def _lstm_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_met
     else:
         model_name = 'lstm_'
     try:
-        model = tf.keras.models.load_model(dir + '/models/' + model_name + loss + '_' + listwise_metric + '.h5')
+        model = tf.keras.models.load_model(
+            operational_dir + '/models/' + model_name + loss + '_' + listwise_metric + '.h5')
         model.summary()
     except (OSError, IOError):
         hp = HyperParameters()
@@ -884,7 +879,7 @@ def _lstm_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_met
                 max_epochs=20,
                 factor=3,
                 executions_per_trial=1,
-                directory=dir + '/hyperparameter_tuning',
+                directory=operational_dir + '/hyperparameter_tuning',
                 project_name=model_name + listwise_metric + '_' + loss + '_project',
                 overwrite=False)
         else:
@@ -895,7 +890,7 @@ def _lstm_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_met
                 max_epochs=20,
                 factor=3,
                 executions_per_trial=1,
-                directory=dir + '/hyperparameter_tuning',
+                directory=operational_dir + '/hyperparameter_tuning',
                 project_name=model_name + listwise_metric + '_' + loss + '_project',
                 overwrite=False)
 
@@ -928,7 +923,7 @@ def _lstm_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_met
         tuner.results_summary()
         print()
 
-        model.save(dir + '/models/' + model_name + loss + '_' + listwise_metric + '.h5')
+        model.save(operational_dir + '/models/' + model_name + loss + '_' + listwise_metric + '.h5')
 
     results = model.predict(X_test)
     _evaluate_model(X_test, y_test, model, listwise_metric,
@@ -942,7 +937,7 @@ def _lstm_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_met
 @timeit
 def gru_model(X_train_nested, y_train_nested, X_test_nested, y_test_nested, X_valid_nested, y_valid_nested,
               max_number_document_on_query, listwise_metric, reverse=True, losses=None, metrics=None,
-              dir='model_outputs', with_attention=False):
+              dir='model_outputs', with_attention=False, operational_dir='operational'):
     if losses is None:
         losses = ['mse', 'kullback_leibler_divergence']
     if metrics is None:
@@ -970,7 +965,8 @@ def gru_model(X_train_nested, y_train_nested, X_test_nested, y_test_nested, X_va
     for loss in losses:
         print("--------------START LOSS", loss + "---------------------")
         _gru_model(X_train, y_train_list, X_test, y_test_list, X_valid, y_valid_list,
-                   listwise_metric, loss=loss, metrics=metrics, dir=dir, with_attention=with_attention)
+                   listwise_metric, loss=loss, metrics=metrics, dir=dir, with_attention=with_attention,
+                   operational_dir=operational_dir)
         print("--------------END LOSS", loss + "---------------------")
 
 
@@ -995,6 +991,7 @@ def _gru_model_tuning(hp):
         metrics=['mean_squared_error', 'kullback_leibler_divergence'])
     return model
 
+
 def _gru_model_with_attention_tuning(hp):
     input_shape = (hp.Choice('num_batches', values=[10]), hp.Choice('num_features', values=[700]))
     i = tf.keras.Input(shape=input_shape, name='main_input')
@@ -1007,8 +1004,8 @@ def _gru_model_with_attention_tuning(hp):
                           max_value=768,
                           step=64), return_sequences=True, input_shape=input_shape, name='gru_2')(x)
     x = attention_3d_block(x, hp.Int('output_dense_size', min_value=32,
-                           max_value=768,
-                           step=64))
+                                     max_value=768,
+                                     step=64))
     x = layers.Dense(1, name='dense_1',
                      activation=hp.Choice('final_activation', values=['softmax', 'relu', 'sigmoid']))(x)
     model = tf.keras.Model(inputs=[i], outputs=[x])
@@ -1018,6 +1015,8 @@ def _gru_model_with_attention_tuning(hp):
         loss=hp.Choice('loss', values=['mse']),
         metrics=['mean_squared_error', 'kullback_leibler_divergence'])
     return model
+
+
 # input_shape = (X_train.shape[1], X_train.shape[2])
 # i = tf.keras.Input(shape=input_shape, name='main_input')
 # # model.add(layers.Embedding(input_dim=1000, input_length=inputshape, output_dim=701))
@@ -1040,7 +1039,7 @@ def _gru_model_with_attention_tuning(hp):
 #           validation_data=(X_valid, y_valid))
 @timeit
 def _gru_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_metric, verbose=True,
-               loss='mse', metrics=None, dir='model_outputs', with_attention=False):
+               loss='mse', metrics=None, dir='model_outputs', with_attention=False, operational_dir='operational'):
     if metrics is None:
         metrics = ['mean_squared_error', 'kullback_leibler_divergence']
     if with_attention:
@@ -1048,7 +1047,8 @@ def _gru_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_metr
     else:
         model_name = 'gru_'
     try:
-        model = tf.keras.models.load_model(dir + '/models/' + model_name + loss + '_' + listwise_metric + '.h5')
+        model = tf.keras.models.load_model(
+            operational_dir + '/models/' + model_name + loss + '_' + listwise_metric + '.h5')
         model.summary()
     except (OSError, IOError):
         hp = HyperParameters()
@@ -1063,7 +1063,7 @@ def _gru_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_metr
                 max_epochs=20,
                 factor=3,
                 executions_per_trial=1,
-                directory=dir + '/hyperparameter_tuning',
+                directory=operational_dir + '/hyperparameter_tuning',
                 project_name=model_name + listwise_metric + '_' + loss + '_project',
                 overwrite=False)
         else:
@@ -1074,7 +1074,7 @@ def _gru_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_metr
                 max_epochs=20,
                 factor=3,
                 executions_per_trial=1,
-                directory=dir + '/hyperparameter_tuning',
+                directory=operational_dir + '/hyperparameter_tuning',
                 project_name=model_name + listwise_metric + '_' + loss + '_project',
                 overwrite=False)
         stop_early = tf.keras.callbacks.EarlyStopping(monitor='val_mean_squared_error', patience=3)
@@ -1106,7 +1106,7 @@ def _gru_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_metr
         tuner.results_summary()
         print()
 
-        model.save(dir + '/models/' + model_name + loss + '_' + listwise_metric + '.h5')
+        model.save(operational_dir + '/models/' + model_name + loss + '_' + listwise_metric + '.h5')
 
     results = model.predict(X_test)
     _evaluate_model(X_test, y_test, model, listwise_metric,
@@ -1119,7 +1119,8 @@ def _gru_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_metr
 
 @timeit
 def attention_model(X_train_nested, y_train_nested, X_test_nested, y_test_nested, X_valid_nested, y_valid_nested,
-                    max_number_document_on_query, listwise_metric, losses=None, metrics=None, dir='model_outputs'):
+                    max_number_document_on_query, listwise_metric, losses=None, metrics=None, dir='model_outputs',
+                    operational_dir='operational'):
     if losses is None:
         losses = ['mse', 'kullback_leibler_divergence']
     if metrics is None:
@@ -1151,7 +1152,7 @@ def attention_model(X_train_nested, y_train_nested, X_test_nested, y_test_nested
     for loss in losses:
         print("--------------START LOSS", loss + "---------------------")
         _attention_model(X_train, y_train_list, X_test, y_test_list, X_valid, y_val_list, listwise_metric,
-                         loss=loss, metrics=metrics, dir=dir)
+                         loss=loss, metrics=metrics, dir=dir, operational_dir=operational_dir)
         print("--------------END LOSS", loss + "---------------------")
 
 
@@ -1159,8 +1160,8 @@ def _attention_model_tuning(hp):
     input_shape = (hp.Choice('num_batches', values=[10]), hp.Choice('num_features', values=[700]))
     i = tf.keras.Input(shape=input_shape, name='main_input')
     x = attention_3d_block(i, hp.Int('output_dense_size', min_value=32,
-                           max_value=768,
-                           step=64))
+                                     max_value=768,
+                                     step=64))
     x = layers.Dense(1, name='dense_1',
                      activation=hp.Choice('final_activation', values=['softmax', 'relu', 'sigmoid']))(x)
     model = tf.keras.Model(inputs=[i], outputs=[x])
@@ -1190,12 +1191,13 @@ def _attention_model_tuning(hp):
 # model.save(dir + '/models/attention_' + loss + '_' + listwise_metric + '.h5')
 @timeit
 def _attention_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_metric, verbose=True,
-                     loss='mse', metrics=None, dir='model_outputs'):
+                     loss='mse', metrics=None, dir='model_outputs', operational_dir='operational'):
     if metrics is None:
         metrics = ['mean_squared_error', 'kullback_leibler_divergence']
 
     try:
-        model = tf.keras.models.load_model(dir + '/models/attention_' + loss + '_' + listwise_metric + '.h5')
+        model = tf.keras.models.load_model(
+            operational_dir + '/models/attention_' + loss + '_' + listwise_metric + '.h5')
         model.summary()
     except (OSError, IOError):
         hp = HyperParameters()
@@ -1209,7 +1211,7 @@ def _attention_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwis
             max_epochs=20,
             factor=3,
             executions_per_trial=1,
-            directory=dir + '/hyperparameter_tuning',
+            directory=operational_dir + '/hyperparameter_tuning',
             project_name='attention_' + listwise_metric + '_' + loss + '_project',
             overwrite=False)
         stop_early = tf.keras.callbacks.EarlyStopping(monitor='val_mean_squared_error', patience=3)
@@ -1241,7 +1243,7 @@ def _attention_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwis
         tuner.results_summary()
         print()
 
-        model.save(dir + '/models/attention_' + loss + '_' + listwise_metric + '.h5')
+        model.save(operational_dir + '/models/attention_' + loss + '_' + listwise_metric + '.h5')
 
     results = model.predict(X_test)
     _evaluate_model(X_test, y_test, model, listwise_metric,
@@ -1254,8 +1256,8 @@ def _attention_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwis
 
 @timeit
 def transformer_model(X_train_nested, y_train_nested, X_test_nested, y_test_nested, X_valid_nested, y_valid_nested,
-                      max_number_document_on_query, listwise_metric, losses=None, metrics=None, dir=dir,
-                      with_feedforward=False):
+                      max_number_document_on_query, listwise_metric, losses=None, metrics=None, dir='model_outputs',
+                      with_feedforward=False, operational_dir='operational'):
     if losses is None:
         losses = ['mse', 'kullback_leibler_divergence']
     if metrics is None:
@@ -1292,14 +1294,19 @@ def transformer_model(X_train_nested, y_train_nested, X_test_nested, y_test_nest
     z_train = np.zeros((X_train.shape[0], X_train.shape[1], necessary_addition))
     z_valid = np.zeros((X_valid.shape[0], X_valid.shape[1], necessary_addition))
     z_test = np.zeros((X_test.shape[0], X_test.shape[1], necessary_addition))
+
     X_train = np.append(X_train, z_train, axis=2)
     X_valid = np.append(X_valid, z_valid, axis=2)
     X_test = np.append(X_test, z_test, axis=2)
 
+    print("ALTERED TRAIN DIM:", X_train.shape)
+    print("ALTERED VALID DIM:", X_valid.shape)
+    print("ALTERED TEST DIM:", X_test.shape)
     for loss in losses:
         print("--------------START LOSS", loss + "---------------------")
         _transformer_model(X_train, y_train_list, X_test, y_test_list, X_valid, y_val_list, listwise_metric,
-                           loss=loss, dir=dir, metrics=metrics, with_feedforward=with_feedforward)
+                           loss=loss, dir=dir, metrics=metrics, with_feedforward=with_feedforward,
+                           operational_dir=operational_dir)
 
 
 def _transformer_model_tuning(hp):
@@ -1347,7 +1354,7 @@ def _transformer_with_feedforward_tuner(hp):
                                   step=64),
                      activation=hp.Choice('third_activation', values=['softmax', 'relu', 'sigmoid']), name='dense_3')(x)
     x = layers.Dense(1, name='fourth_neuron',
-                           activation=hp.Choice('fourth_activation', values=['softmax', 'relu', 'sigmoid']))(x)
+                     activation=hp.Choice('fourth_activation', values=['softmax', 'relu', 'sigmoid']))(x)
     x = layers.Flatten()(x)
     x = layers.Dense(1, name='predictions',
                      activation=hp.Choice('output_activation', values=['softmax', 'relu', 'sigmoid']))(x)
@@ -1362,7 +1369,8 @@ def _transformer_with_feedforward_tuner(hp):
 
 @timeit
 def _transformer_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_metric, verbose=True,
-                       loss='mse', metrics=None, dir='model_outputs', with_feedforward=False):
+                       loss='mse', metrics=None, dir='model_outputs', with_feedforward=False,
+                       operational_dir='operational'):
     if metrics is None:
         metrics = ['mean_squared_error', 'kullback_leibler_divergence']
     if with_feedforward:
@@ -1370,10 +1378,12 @@ def _transformer_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listw
     else:
         model_name = 'transformer_'
     try:
-        model = tf.keras.models.load_model(dir + '/models/' + model_name + loss + '_' + listwise_metric + '.h5')
+        model = tf.keras.models.load_model(
+            operational_dir + '/models/' + model_name + loss + '_' + listwise_metric + '.h5')
         model.summary()
     except (OSError, IOError):
         hp = HyperParameters()
+        print("X_TRAIN SHAPE", X_train.shape)
         hp.Choice('num_batches', values=[X_train.shape[1]])
         hp.Choice('num_features', values=[X_train.shape[2]])
         hp.Choice('loss', values=[loss])
@@ -1385,7 +1395,7 @@ def _transformer_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listw
                 max_epochs=20,
                 factor=3,
                 executions_per_trial=1,
-                directory=dir + '/hyperparameter_tuning',
+                directory=operational_dir + '/hyperparameter_tuning',
                 project_name=model_name + listwise_metric + '_' + loss + '_project',
                 overwrite=False)
         else:
@@ -1396,7 +1406,7 @@ def _transformer_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listw
                 max_epochs=20,
                 factor=3,
                 executions_per_trial=1,
-                directory=dir + '/hyperparameter_tuning',
+                directory=operational_dir + '/hyperparameter_tuning',
                 project_name=model_name + listwise_metric + '_' + loss + '_project',
                 overwrite=False)
         stop_early = tf.keras.callbacks.EarlyStopping(monitor='val_mean_squared_error', patience=3)
@@ -1428,7 +1438,7 @@ def _transformer_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listw
         tuner.results_summary()
         print()
 
-        model.save(dir + '/models/' + model_name + loss + '_' + listwise_metric + '.h5')
+        model.save(operational_dir + '/models/' + model_name + loss + '_' + listwise_metric + '.h5')
 
     results = model.predict(X_test)
     _evaluate_model(X_test, y_test, model, listwise_metric,
@@ -1644,13 +1654,16 @@ def process_data(dense_input_dir="ltrc_yahoo/set1/",
                  predict_input_dir="ltrc_yahoo/set1/",
                  y_output_dir="ltrc_yahoo/set1/ML/",
                  dataset="train", add_noise=True,
-                 eval_metrics=None):
+                 eval_metrics=None,
+                 k=10):
     if eval_metrics is None:
         eval_metrics = {"NDCG", "ERR", "Precision", "RR"}
     dense_file = dataset + "_dense.txt"
     predict_file = dataset + ".predict"
     y_file_base = "y_" + dataset
-    y_files = [y_output_dir + y_file_base + '_' + eval_metric + ".txt" for eval_metric in eval_metrics]
+    y_files = [y_output_dir + y_file_base + '_' + eval_metric + "_at_" + str(k) + ".txt" for eval_metric in
+               eval_metrics]
+    print("Y FILES", y_files)
     y_contains = [os.path.exists(y_file) for y_file in y_files]
     if add_noise:
         print("---------START ADD NOISE - PROCESS DATA----------")
@@ -1660,11 +1673,12 @@ def process_data(dense_input_dir="ltrc_yahoo/set1/",
                                                                      predict_input_dir + predict_file,
                                                                      eval_metrics=eval_metrics,
                                                                      add_noise=True,
-                                                                     sigma=0.1)
-            write_data_to_file(X_nested, y_nested_by_metric, x_output_dir + x_file, y_output_dir + y_file_base)
+                                                                     sigma=0.1,
+                                                                     n=k)
+            write_data_to_file(X_nested, y_nested_by_metric, x_output_dir + x_file, y_output_dir + y_file_base, n=k)
         else:
             X_nested, y_nested_by_metric, doc_num_info = read_data_from_file(x_output_dir + x_file,
-                                                                             y_output_dir + y_file_base)
+                                                                             y_output_dir + y_file_base, k=k)
         print("---------END ADD NOISE - PROCESS DATA----------")
     else:
         print("---------START NO NOISE - PROCESS DATA----------")
@@ -1673,11 +1687,12 @@ def process_data(dense_input_dir="ltrc_yahoo/set1/",
             X_nested, y_nested_by_metric, doc_num_info = return_data(dense_input_dir + dense_file,
                                                                      predict_input_dir + predict_file,
                                                                      eval_metrics=eval_metrics,
-                                                                     add_noise=False)
-            write_data_to_file(X_nested, y_nested_by_metric, x_output_dir + x_file, y_output_dir + y_file_base)
+                                                                     add_noise=False,
+                                                                     n=k)
+            write_data_to_file(X_nested, y_nested_by_metric, x_output_dir + x_file, y_output_dir + y_file_base, n=k)
         else:
             X_nested, y_nested_by_metric, doc_num_info = read_data_from_file(x_output_dir + x_file,
-                                                                             y_output_dir + y_file_base)
+                                                                             y_output_dir + y_file_base, k=k)
         print("---------END NO NOISE - PROCESS DATA----------")
     return X_nested, y_nested_by_metric, doc_num_info
 
@@ -1703,7 +1718,7 @@ def get_flattened_row_size(X_train_nested, doc_num_info):
 def process_models(X_train_nested, y_train_nested_by_metric,
                    X_valid_nested, y_valid_nested_by_metric,
                    X_test_nested, y_test_nested_by_metric,
-                   doc_num_info, dir='model_outputs',
+                   doc_num_info, dir='model_outputs', operational_dir='operations',
                    eval_metrics=None, model_mode="Transformer",
                    run_all=True):
     flattened_row_size, max_number_document_on_query = get_flattened_row_size(X_train_nested, doc_num_info)
@@ -1729,7 +1744,8 @@ def process_models(X_train_nested, y_train_nested_by_metric,
                                listwise_eval_metric,
                                losses=loss,
                                metrics=metrics,
-                               dir=dir)
+                               dir=dir,
+                               operational_dir=operational_dir)
             print("--------------END FEEDFORWARD---------------------")
         if model_mode.lower() == "lstm" or run_all:
             print("--------------START LSTM---------------------")
@@ -1740,7 +1756,8 @@ def process_models(X_train_nested, y_train_nested_by_metric,
                        listwise_eval_metric,
                        losses=loss,
                        metrics=metrics,
-                       dir=dir)
+                       dir=dir,
+                       operational_dir=operational_dir)
             print("--------------END LSTM---------------------")
         if model_mode.lower() == "lstm_with_attention" or run_all:
             print("--------------START LSTM WITH ATTENTION---------------------")
@@ -1751,7 +1768,8 @@ def process_models(X_train_nested, y_train_nested_by_metric,
                        listwise_eval_metric,
                        losses=loss,
                        metrics=metrics,
-                       dir=dir, with_attention=True)
+                       dir=dir, with_attention=True,
+                       operational_dir=operational_dir)
             print("--------------END LSTM WITH ATTENTION---------------------")
         if model_mode.lower() == "gru" or run_all:
             print("--------------START GRU---------------------")
@@ -1762,7 +1780,8 @@ def process_models(X_train_nested, y_train_nested_by_metric,
                       listwise_eval_metric,
                       losses=loss,
                       metrics=metrics,
-                      dir=dir)
+                      dir=dir,
+                      operational_dir=operational_dir)
             print("--------------END GRU---------------------")
         if model_mode.lower() == "gru_with_attention" or run_all:
             print("--------------START GRU---------------------")
@@ -1773,7 +1792,8 @@ def process_models(X_train_nested, y_train_nested_by_metric,
                       listwise_eval_metric,
                       losses=loss,
                       metrics=metrics,
-                      dir=dir, with_attention=True)
+                      dir=dir, with_attention=True,
+                      operational_dir=operational_dir)
             print("--------------END GRU---------------------")
         if (model_mode.lower() == "attention" or model_mode.lower() == "attn") or run_all:
             print("--------------START ATTN---------------------")
@@ -1784,7 +1804,8 @@ def process_models(X_train_nested, y_train_nested_by_metric,
                             listwise_eval_metric,
                             losses=loss,
                             metrics=metrics,
-                            dir=dir)
+                            dir=dir,
+                            operational_dir=operational_dir)
             print("--------------END ATTN---------------------")
         if model_mode.lower() == "transformer" or run_all:
             print("--------------START Transformer---------------------")
@@ -1794,7 +1815,8 @@ def process_models(X_train_nested, y_train_nested_by_metric,
                               max_number_document_on_query,
                               listwise_eval_metric,
                               losses=loss,
-                              dir=dir)
+                              dir=dir,
+                              operational_dir=operational_dir)
             print("--------------END Transformer---------------------")
         if model_mode.lower() == "transformer_with_feedforward" or run_all:
             print("--------------START Transformer WITH FEEDFORWARD---------------------")
@@ -1804,7 +1826,8 @@ def process_models(X_train_nested, y_train_nested_by_metric,
                               max_number_document_on_query,
                               listwise_eval_metric,
                               losses=loss,
-                              dir=dir, with_feedforward=True)
+                              dir=dir, with_feedforward=True,
+                              operational_dir=operational_dir)
             print("--------------END Transformer WITH FEEDFORWARD---------------------")
         if (model_mode.lower() == "light gbm"
             or model_mode.lower() == "lightgbm"
@@ -1817,7 +1840,8 @@ def process_models(X_train_nested, y_train_nested_by_metric,
                             listwise_eval_metric,
                             loss='mse',
                             metrics=metrics,
-                            dir=dir)
+                            dir=dir,
+                            operational_dir=operational_dir)
             print("--------------END Light GBM---------------------")
 
 
@@ -1866,6 +1890,8 @@ def main():
                       help="Features file for validation")
     parser.add_option("-f", "--valid_predictions",
                       help="Predictions file for validation")
+    parser.add_option("-k", "--y_evaluate_at",
+                      help="number cutoff for evaluation (i.e. NDCG at k)")
     parser.add_option("-o", "--output_dir",
                       help="Dir to save the outputs")
     parser.add_option("-m", "--model_to_run",
@@ -1884,7 +1910,17 @@ def main():
         run_all_option = False
         model_to_run_option = options.model_to_run
 
+    k = 10
+    if options.y_evaluate_at is not None:
+        k = int(options.y_evaluate_at)
+
     print("UNDERLYING MACHINE LEARNING MODEL:", underlying_model)
+    print("EVALUATION METRIC AT:", k)
+    if not run_all_option:
+        print("RUNNING ML MODEL", model_to_run_option)
+    else:
+        print("RUNNING ALL ML MODELS")
+
     X_train_nested, y_train_nested_by_metric = None, None
     X_test_nested, y_test_nested_by_metric = None, None
     X_valid_nested, y_valid_nested_by_metric = None, None
@@ -1947,23 +1983,27 @@ def main():
                                                                               predict_input_dir=predict_input_dir,
                                                                               y_output_dir=y_output_dir,
                                                                               dataset="train",
-                                                                              add_noise=False)
+                                                                              add_noise=False,
+                                                                              k=k)
         X_test_nested, y_test_nested_by_metric, doc_num_info = process_data(x_output_dir=x_output_dir,
                                                                             dense_input_dir=dense_input_dir,
                                                                             predict_input_dir=predict_input_dir,
                                                                             y_output_dir=y_output_dir,
                                                                             dataset="test",
-                                                                            add_noise=False)
+                                                                            add_noise=False,
+                                                                            k=k)
         X_valid_nested, y_valid_nested_by_metric, doc_num_info = process_data(x_output_dir=x_output_dir,
                                                                               dense_input_dir=dense_input_dir,
                                                                               predict_input_dir=predict_input_dir,
                                                                               y_output_dir=y_output_dir,
                                                                               dataset="valid",
-                                                                              add_noise=False)
+                                                                              add_noise=False,
+                                                                              k=k)
         process_models(X_train_nested, y_train_nested_by_metric,
                        X_valid_nested, y_valid_nested_by_metric,
                        X_test_nested, y_test_nested_by_metric,
-                       doc_num_info, dir='model_outputs/' + underlying_model,
+                       doc_num_info, dir='model_outputs/' + underlying_model + '/' + (str(k)),
+                       operational_dir='operational/' + underlying_model + '/' + (str(k)),
                        run_all=run_all_option, model_mode=model_to_run_option
                        # eval_metrics={"Precision"}
                        )

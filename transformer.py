@@ -41,6 +41,7 @@ def attention_builder(name,
                       input_layer,
                       trainable=True):
     """Get multi-head self-attention builder.
+    :param input_layer:
     :param key_dim:
     :param name: Prefix of names for internal layers.
     :param head_num: Number of heads in multi-head self-attention.
