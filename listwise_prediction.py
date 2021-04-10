@@ -9,7 +9,7 @@ from io import StringIO
 
 import lightgbm as lgb
 import numpy as np
-# import torch
+import torch
 # import torch.nn as nn
 # import torch.optim as optim
 import joblib
@@ -855,7 +855,7 @@ def _lstm_model_with_attention_tuning(hp):
 #           validation_data=(X_valid, y_valid))
 @timeit
 def _lstm_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_metric, verbose=True,
-                loss='mse', metrics=None, dir='model_outputs', with_attention=False, operational_dir='operational'):
+                loss='mse', metrics=None, dir='model_outputs', with_attention=False, operational_dir='operations'):
     if metrics is None:
         metrics = ['mean_squared_error', 'kullback_leibler_divergence']
     if with_attention:
@@ -937,7 +937,7 @@ def _lstm_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_met
 @timeit
 def gru_model(X_train_nested, y_train_nested, X_test_nested, y_test_nested, X_valid_nested, y_valid_nested,
               max_number_document_on_query, listwise_metric, reverse=True, losses=None, metrics=None,
-              dir='model_outputs', with_attention=False, operational_dir='operational'):
+              dir='model_outputs', with_attention=False, operational_dir='operations'):
     if losses is None:
         losses = ['mse', 'kullback_leibler_divergence']
     if metrics is None:
@@ -1039,7 +1039,7 @@ def _gru_model_with_attention_tuning(hp):
 #           validation_data=(X_valid, y_valid))
 @timeit
 def _gru_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_metric, verbose=True,
-               loss='mse', metrics=None, dir='model_outputs', with_attention=False, operational_dir='operational'):
+               loss='mse', metrics=None, dir='model_outputs', with_attention=False, operational_dir='operations'):
     if metrics is None:
         metrics = ['mean_squared_error', 'kullback_leibler_divergence']
     if with_attention:
@@ -1120,7 +1120,7 @@ def _gru_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_metr
 @timeit
 def attention_model(X_train_nested, y_train_nested, X_test_nested, y_test_nested, X_valid_nested, y_valid_nested,
                     max_number_document_on_query, listwise_metric, losses=None, metrics=None, dir='model_outputs',
-                    operational_dir='operational'):
+                    operational_dir='operations'):
     if losses is None:
         losses = ['mse', 'kullback_leibler_divergence']
     if metrics is None:
@@ -1191,7 +1191,7 @@ def _attention_model_tuning(hp):
 # model.save(dir + '/models/attention_' + loss + '_' + listwise_metric + '.h5')
 @timeit
 def _attention_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_metric, verbose=True,
-                     loss='mse', metrics=None, dir='model_outputs', operational_dir='operational'):
+                     loss='mse', metrics=None, dir='model_outputs', operational_dir='operations'):
     if metrics is None:
         metrics = ['mean_squared_error', 'kullback_leibler_divergence']
 
@@ -1257,7 +1257,7 @@ def _attention_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwis
 @timeit
 def transformer_model(X_train_nested, y_train_nested, X_test_nested, y_test_nested, X_valid_nested, y_valid_nested,
                       max_number_document_on_query, listwise_metric, losses=None, metrics=None, dir='model_outputs',
-                      with_feedforward=False, operational_dir='operational'):
+                      with_feedforward=False, operational_dir='operations'):
     if losses is None:
         losses = ['mse', 'kullback_leibler_divergence']
     if metrics is None:
@@ -1370,7 +1370,7 @@ def _transformer_with_feedforward_tuner(hp):
 @timeit
 def _transformer_model(X_train, y_train, X_test, y_test, X_valid, y_valid, listwise_metric, verbose=True,
                        loss='mse', metrics=None, dir='model_outputs', with_feedforward=False,
-                       operational_dir='operational'):
+                       operational_dir='operations'):
     if metrics is None:
         metrics = ['mean_squared_error', 'kullback_leibler_divergence']
     if with_feedforward:
@@ -2003,7 +2003,7 @@ def main():
                        X_valid_nested, y_valid_nested_by_metric,
                        X_test_nested, y_test_nested_by_metric,
                        doc_num_info, dir='model_outputs/' + underlying_model + '/' + (str(k)),
-                       operational_dir='operational/' + underlying_model + '/' + (str(k)),
+                       operational_dir='operations/' + underlying_model + '/' + (str(k)),
                        run_all=run_all_option, model_mode=model_to_run_option
                        # eval_metrics={"Precision"}
                        )
