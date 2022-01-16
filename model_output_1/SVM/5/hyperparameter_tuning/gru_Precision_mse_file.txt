@@ -1,0 +1,174 @@
+Results:
+Results summary
+Results in model_outputs/SVM/5/hyperparameter_tuning/gru_Precision_mse_project
+Showing 10 best trials
+Objective(name='val_mean_squared_error', direction='min')
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 224
+second_gru: 416
+final_activation: relu
+learning_rate: 0.01
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: 74311b5c7035c13235089f14c8669811
+Score: 0.1042136698961258
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 352
+second_gru: 608
+final_activation: relu
+learning_rate: 0.001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: d014667012d846fbc0b965cf2c6ff1d0
+Score: 0.11002218723297119
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 96
+second_gru: 32
+final_activation: relu
+learning_rate: 0.01
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: fc1dd1daa547f9d407d50326d39bf262
+Score: 0.11128632724285126
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 224
+second_gru: 416
+final_activation: relu
+learning_rate: 0.01
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: db5e289d939e87865100d2a58869ab24
+Score: 0.11271354556083679
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 224
+second_gru: 416
+final_activation: relu
+learning_rate: 0.01
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.11311443150043488
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 96
+second_gru: 32
+final_activation: relu
+learning_rate: 0.01
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: e052efecf9aa964d50490c31c785b3e2
+Score: 0.11324644833803177
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 288
+second_gru: 352
+final_activation: sigmoid
+learning_rate: 0.01
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: af8924805406817be452aeb03d89c479
+Score: 0.11342483758926392
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 352
+second_gru: 608
+final_activation: relu
+learning_rate: 0.001
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.11349575966596603
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 416
+second_gru: 672
+final_activation: sigmoid
+learning_rate: 0.01
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 7de2d76ac8ad5fe67d1dd889190d51f6
+Score: 0.11459285765886307
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 288
+second_gru: 352
+final_activation: sigmoid
+learning_rate: 0.01
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.11551617085933685
+
+
+Best Model Summary:
+Model: "model"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+main_input (InputLayer)      [(None, 10, 700)]         0         
+_________________________________________________________________
+gru_1 (GRU)                  (None, 10, 224)           622272    
+_________________________________________________________________
+gru_2 (GRU)                  (None, 416)               801216    
+_________________________________________________________________
+dense_1 (Dense)              (None, 1)                 417       
+=================================================================
+Total params: 1,423,905
+Trainable params: 1,423,905
+Non-trainable params: 0
+_________________________________________________________________
+
+
+

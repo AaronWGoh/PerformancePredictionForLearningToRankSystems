@@ -1,0 +1,198 @@
+Results:
+Results summary
+Results in model_outputs/LambdaMart/hyperparameter_tuning/gru_with_attention_ERR_mse_project
+Showing 10 best trials
+Objective(name='val_mean_squared_error', direction='min')
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 480
+second_gru: 352
+output_dense_size: 736
+final_activation: sigmoid
+learning_rate: 0.01
+tuner/epochs: 20
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.1667589545249939
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 544
+second_gru: 480
+output_dense_size: 544
+final_activation: sigmoid
+learning_rate: 0.1
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: a62d02c263a93acf69850c464a1f3c6d
+Score: 0.16697868704795837
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 544
+second_gru: 480
+output_dense_size: 544
+final_activation: sigmoid
+learning_rate: 0.1
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.167292520403862
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 480
+second_gru: 160
+output_dense_size: 32
+final_activation: sigmoid
+learning_rate: 0.01
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: 93c2f33f662d0dd044daef193fd9a0ad
+Score: 0.16795772314071655
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 480
+second_gru: 160
+output_dense_size: 32
+final_activation: sigmoid
+learning_rate: 0.01
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 91b3b07f35a2137ec836100770f3b846
+Score: 0.16846992075443268
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 224
+second_gru: 32
+output_dense_size: 608
+final_activation: relu
+learning_rate: 0.01
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.16891242563724518
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 352
+second_gru: 480
+output_dense_size: 480
+final_activation: relu
+learning_rate: 0.001
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.16940149664878845
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 480
+second_gru: 160
+output_dense_size: 32
+final_activation: sigmoid
+learning_rate: 0.01
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.16941989958286285
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 224
+second_gru: 32
+output_dense_size: 608
+final_activation: relu
+learning_rate: 0.01
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 0f49e7e42c94fb35a4124365f42e7973
+Score: 0.17002594470977783
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_gru: 288
+second_gru: 160
+output_dense_size: 544
+final_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 20
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.17035287618637085
+
+
+Best Model Summary:
+Model: "model"
+__________________________________________________________________________________________________
+Layer (type)                    Output Shape         Param #     Connected to                     
+==================================================================================================
+main_input (InputLayer)         [(None, 10, 700)]    0                                            
+__________________________________________________________________________________________________
+gru_1 (GRU)                     (None, 10, 480)      1702080     main_input[0][0]                 
+__________________________________________________________________________________________________
+gru_2 (GRU)                     (None, 10, 352)      880704      gru_1[0][0]                      
+__________________________________________________________________________________________________
+attention_score_vec (Dense)     (None, 10, 352)      123904      gru_2[0][0]                      
+__________________________________________________________________________________________________
+last_hidden_state (Lambda)      (None, 352)          0           gru_2[0][0]                      
+__________________________________________________________________________________________________
+attention_score (Dot)           (None, 10)           0           attention_score_vec[0][0]        
+                                                                 last_hidden_state[0][0]          
+__________________________________________________________________________________________________
+attention_weight (Activation)   (None, 10)           0           attention_score[0][0]            
+__________________________________________________________________________________________________
+context_vector (Dot)            (None, 352)          0           gru_2[0][0]                      
+                                                                 attention_weight[0][0]           
+__________________________________________________________________________________________________
+attention_output (Concatenate)  (None, 704)          0           context_vector[0][0]             
+                                                                 last_hidden_state[0][0]          
+__________________________________________________________________________________________________
+attention_vector (Dense)        (None, 736)          518144      attention_output[0][0]           
+__________________________________________________________________________________________________
+dense_1 (Dense)                 (None, 1)            737         attention_vector[0][0]           
+==================================================================================================
+Total params: 3,225,569
+Trainable params: 3,225,569
+Non-trainable params: 0
+__________________________________________________________________________________________________
+
+
+

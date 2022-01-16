@@ -1,0 +1,200 @@
+Results:
+Results summary
+Results in model_outputs/LambdaMart/hyperparameter_tuning/lstm_with_attention_Precision_kullback_leibler_divergence_project
+Showing 10 best trials
+Objective(name='val_mean_squared_error', direction='min')
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_lstm: 96
+second_lstm: 672
+output_dense_size: 160
+final_activation: relu
+learning_rate: 1e-05
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 3209309a7d2a9bf003897c14e3abe007
+Score: 0.1702907234430313
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_lstm: 288
+second_lstm: 160
+output_dense_size: 608
+final_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.1856386810541153
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_lstm: 96
+second_lstm: 672
+output_dense_size: 160
+final_activation: relu
+learning_rate: 1e-05
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.18610337376594543
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_lstm: 288
+second_lstm: 160
+output_dense_size: 608
+final_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 38b75bff803aeb5eed3fbea94f9f370f
+Score: 0.18656671047210693
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_lstm: 96
+second_lstm: 672
+output_dense_size: 160
+final_activation: relu
+learning_rate: 1e-05
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: 079b27d983f71c76a1d2150a348f7f43
+Score: 0.18850137293338776
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_lstm: 608
+second_lstm: 736
+output_dense_size: 352
+final_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: 10d090cac61bd1e9212d7e2d757ff61e
+Score: 0.1885242760181427
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_lstm: 608
+second_lstm: 736
+output_dense_size: 352
+final_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.18937063217163086
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_lstm: 544
+second_lstm: 672
+output_dense_size: 544
+final_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 20
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.18939608335494995
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_lstm: 288
+second_lstm: 160
+output_dense_size: 608
+final_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: 76011e7f1860fb324f6334de84b0790e
+Score: 0.1894587129354477
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_lstm: 288
+second_lstm: 544
+output_dense_size: 480
+final_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 2e0157ae616eb7d144567a92a8a9a678
+Score: 0.19063447415828705
+
+
+Best Model Summary:
+Model: "model"
+__________________________________________________________________________________________________
+Layer (type)                    Output Shape         Param #     Connected to                     
+==================================================================================================
+main_input (InputLayer)         [(None, 10, 700)]    0                                            
+__________________________________________________________________________________________________
+lstm_1 (LSTM)                   (None, 10, 96)       306048      main_input[0][0]                 
+__________________________________________________________________________________________________
+lstm_2 (LSTM)                   (None, 10, 672)      2067072     lstm_1[0][0]                     
+__________________________________________________________________________________________________
+attention_score_vec (Dense)     (None, 10, 672)      451584      lstm_2[0][0]                     
+__________________________________________________________________________________________________
+last_hidden_state (Lambda)      (None, 672)          0           lstm_2[0][0]                     
+__________________________________________________________________________________________________
+attention_score (Dot)           (None, 10)           0           attention_score_vec[0][0]        
+                                                                 last_hidden_state[0][0]          
+__________________________________________________________________________________________________
+attention_weight (Activation)   (None, 10)           0           attention_score[0][0]            
+__________________________________________________________________________________________________
+context_vector (Dot)            (None, 672)          0           lstm_2[0][0]                     
+                                                                 attention_weight[0][0]           
+__________________________________________________________________________________________________
+attention_output (Concatenate)  (None, 1344)         0           context_vector[0][0]             
+                                                                 last_hidden_state[0][0]          
+__________________________________________________________________________________________________
+attention_vector (Dense)        (None, 160)          215040      attention_output[0][0]           
+__________________________________________________________________________________________________
+dense_1 (Dense)                 (None, 1)            161         attention_vector[0][0]           
+==================================================================================================
+Total params: 3,039,905
+Trainable params: 3,039,905
+Non-trainable params: 0
+__________________________________________________________________________________________________
+
+
+

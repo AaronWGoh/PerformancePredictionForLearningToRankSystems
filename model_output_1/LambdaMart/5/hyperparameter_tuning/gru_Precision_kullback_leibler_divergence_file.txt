@@ -1,0 +1,173 @@
+Results:
+Results summary
+Results in model_outputs/LambdaMart/5/hyperparameter_tuning/gru_Precision_kullback_leibler_divergence_project
+Showing 10 best trials
+Objective(name='val_mean_squared_error', direction='min')
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_gru: 32
+second_gru: 96
+final_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: 4a6b459ef513c258dd53e472250e28d8
+Score: 0.1807957887649536
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_gru: 32
+second_gru: 96
+final_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.19639703631401062
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_gru: 32
+second_gru: 96
+final_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: c60c786a87dc9c04bc440ec6c3a4ab0c
+Score: 0.19874022901058197
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_gru: 96
+second_gru: 608
+final_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.20448048412799835
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_gru: 96
+second_gru: 608
+final_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: a010e5d61e2af39b6cbb3a16d6fb37e5
+Score: 0.2072661966085434
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_gru: 480
+second_gru: 224
+final_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: 2869843e33c95e2be8735c3855160cd1
+Score: 0.25751692056655884
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_gru: 480
+second_gru: 224
+final_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 7b392cfb3a7a106ddb365f995a9011f4
+Score: 0.2716118395328522
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_gru: 480
+second_gru: 224
+final_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.2754000127315521
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_gru: 672
+second_gru: 352
+final_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 20
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.2908109724521637
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: kullback_leibler_divergence
+first_gru: 224
+second_gru: 224
+final_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: ab35d1492dcd29cc11cfe0ec8a4f989f
+Score: 0.43861323595046997
+
+
+Best Model Summary:
+Model: "model"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+main_input (InputLayer)      [(None, 10, 700)]         0         
+_________________________________________________________________
+gru_1 (GRU)                  (None, 10, 32)            70464     
+_________________________________________________________________
+gru_2 (GRU)                  (None, 96)                37440     
+_________________________________________________________________
+dense_1 (Dense)              (None, 1)                 97        
+=================================================================
+Total params: 108,001
+Trainable params: 108,001
+Non-trainable params: 0
+_________________________________________________________________
+
+
+

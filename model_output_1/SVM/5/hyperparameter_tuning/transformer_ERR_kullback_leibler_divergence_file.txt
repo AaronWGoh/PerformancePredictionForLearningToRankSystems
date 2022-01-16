@@ -1,0 +1,186 @@
+Results:
+Results summary
+Results in model_outputs/SVM/5/hyperparameter_tuning/transformer_ERR_kullback_leibler_divergence_project
+Showing 10 best trials
+Objective(name='val_mean_squared_error', direction='min')
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 8
+feedforward_act: tanh
+final_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: 2eae9a1d37c5fd4cfc37b4f8e68340e3
+Score: 0.27144861221313477
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 8
+feedforward_act: tanh
+final_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.2889153063297272
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 8
+feedforward_act: tanh
+final_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 20
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.3370320200920105
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 8
+feedforward_act: sigmoid
+final_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 540a39562d82b7fb7dbea682d1ba3fb1
+Score: 0.34724581241607666
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 8
+feedforward_act: sigmoid
+final_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.3475459814071655
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 16
+feedforward_act: sigmoid
+final_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.3475709855556488
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 16
+feedforward_act: sigmoid
+final_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: e43fd2ac559ca2c1dda1f90662c766a3
+Score: 0.34759026765823364
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 16
+feedforward_act: sigmoid
+final_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: ce6d351b6143233bb44f3705c850f4b4
+Score: 0.34760600328445435
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 8
+feedforward_act: sigmoid
+final_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: 489a9fe39323ec2951c4e3bff1512bc6
+Score: 0.3476981818675995
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 8
+feedforward_act: relu
+final_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 71bc955fad0d2344f26a0f0b3a284e4d
+Score: 0.34772834181785583
+
+
+Best Model Summary:
+Model: "model"
+__________________________________________________________________________________________________
+Layer (type)                    Output Shape         Param #     Connected to                     
+==================================================================================================
+main_input (InputLayer)         [(None, 10, 720)]    0                                            
+__________________________________________________________________________________________________
+transformer-MultiHeadSelfAttent (None, 10, 720)      16606800    main_input[0][0]                 
+                                                                 main_input[0][0]                 
+__________________________________________________________________________________________________
+transformer-MultiHeadSelfAttent (None, 10, 720)      0           main_input[0][0]                 
+                                                                 transformer-MultiHeadSelfAttentio
+__________________________________________________________________________________________________
+transformer-MultiHeadSelfAttent (None, 10, 720)      1440        transformer-MultiHeadSelfAttentio
+__________________________________________________________________________________________________
+transformer-FeedForward (Dense) (None, 10, 720)      519120      main_input[0][0]                 
+__________________________________________________________________________________________________
+transformer-FeedForward-Add (Ad (None, 10, 720)      0           transformer-MultiHeadSelfAttentio
+                                                                 transformer-FeedForward[0][0]    
+__________________________________________________________________________________________________
+transformer-FeedForward-Norm (L (None, 10, 720)      1440        transformer-FeedForward-Add[0][0]
+__________________________________________________________________________________________________
+flatten (Flatten)               (None, 7200)         0           transformer-FeedForward-Norm[0][0
+__________________________________________________________________________________________________
+dense_1 (Dense)                 (None, 1)            7201        flatten[0][0]                    
+==================================================================================================
+Total params: 17,136,001
+Trainable params: 17,136,001
+Non-trainable params: 0
+__________________________________________________________________________________________________
+
+
+

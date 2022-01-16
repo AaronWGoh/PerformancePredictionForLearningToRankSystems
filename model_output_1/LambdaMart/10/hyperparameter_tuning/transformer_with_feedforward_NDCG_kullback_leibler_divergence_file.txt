@@ -1,0 +1,263 @@
+Results:
+Results summary
+Results in model_outputs/LambdaMart/hyperparameter_tuning/transformer_with_feedforward_NDCG_kullback_leibler_divergence_project
+Showing 10 best trials
+Objective(name='val_mean_squared_error', direction='min')
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 16
+feedforward_act: tanh
+first_neuron: 224
+first_activation: softmax
+second_neuron: 608
+second_activation: softmax
+third_neuron: 224
+third_activation: relu
+fourth_activation: relu
+output_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: 5b853657155e3f40e93977172a6490ac
+Score: 0.04997991397976875
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 8
+feedforward_act: tanh
+first_neuron: 288
+first_activation: softmax
+second_neuron: 224
+second_activation: softmax
+third_neuron: 480
+third_activation: softmax
+fourth_activation: relu
+output_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 20
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.04998001828789711
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 16
+feedforward_act: tanh
+first_neuron: 224
+first_activation: softmax
+second_neuron: 608
+second_activation: softmax
+third_neuron: 224
+third_activation: relu
+fourth_activation: relu
+output_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.05003996193408966
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 16
+feedforward_act: relu
+first_neuron: 416
+first_activation: sigmoid
+second_neuron: 608
+second_activation: relu
+third_neuron: 672
+third_activation: relu
+fourth_activation: sigmoid
+output_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 5f03961fa7d0f9286078ed238581ca54
+Score: 0.05045081302523613
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 16
+feedforward_act: softmax
+first_neuron: 352
+first_activation: relu
+second_neuron: 352
+second_activation: sigmoid
+third_neuron: 672
+third_activation: sigmoid
+fourth_activation: sigmoid
+output_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: cfcb68e021f588369cc51823e32d4975
+Score: 0.05105248838663101
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 16
+feedforward_act: softmax
+first_neuron: 352
+first_activation: relu
+second_neuron: 352
+second_activation: sigmoid
+third_neuron: 672
+third_activation: sigmoid
+fourth_activation: sigmoid
+output_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.053772903978824615
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 16
+feedforward_act: tanh
+first_neuron: 416
+first_activation: softmax
+second_neuron: 96
+second_activation: sigmoid
+third_neuron: 672
+third_activation: sigmoid
+fourth_activation: softmax
+output_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.05799735337495804
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 16
+feedforward_act: relu
+first_neuron: 672
+first_activation: relu
+second_neuron: 96
+second_activation: relu
+third_neuron: 160
+third_activation: sigmoid
+fourth_activation: relu
+output_activation: sigmoid
+learning_rate: 0.01
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.07515060156583786
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 16
+feedforward_act: relu
+first_neuron: 672
+first_activation: relu
+second_neuron: 96
+second_activation: relu
+third_neuron: 160
+third_activation: sigmoid
+fourth_activation: relu
+output_activation: sigmoid
+learning_rate: 0.01
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: b70d831ff795f10741690e08a31c67b9
+Score: 0.07516553997993469
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: kullback_leibler_divergence
+num_heads: 16
+feedforward_act: relu
+first_neuron: 672
+first_activation: relu
+second_neuron: 96
+second_activation: relu
+third_neuron: 160
+third_activation: sigmoid
+fourth_activation: relu
+output_activation: sigmoid
+learning_rate: 0.01
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: f91aeef675352cf8958c3f9fb29af575
+Score: 0.07517707347869873
+
+
+Best Model Summary:
+Model: "model"
+__________________________________________________________________________________________________
+Layer (type)                    Output Shape         Param #     Connected to                     
+==================================================================================================
+main_input (InputLayer)         [(None, 10, 720)]    0                                            
+__________________________________________________________________________________________________
+transformer-MultiHeadSelfAttent (None, 10, 720)      33212880    main_input[0][0]                 
+                                                                 main_input[0][0]                 
+__________________________________________________________________________________________________
+transformer-MultiHeadSelfAttent (None, 10, 720)      0           main_input[0][0]                 
+                                                                 transformer-MultiHeadSelfAttentio
+__________________________________________________________________________________________________
+transformer-MultiHeadSelfAttent (None, 10, 720)      1440        transformer-MultiHeadSelfAttentio
+__________________________________________________________________________________________________
+transformer-FeedForward (Dense) (None, 10, 720)      519120      main_input[0][0]                 
+__________________________________________________________________________________________________
+transformer-FeedForward-Add (Ad (None, 10, 720)      0           transformer-MultiHeadSelfAttentio
+                                                                 transformer-FeedForward[0][0]    
+__________________________________________________________________________________________________
+transformer-FeedForward-Norm (L (None, 10, 720)      1440        transformer-FeedForward-Add[0][0]
+__________________________________________________________________________________________________
+dense_1 (Dense)                 (None, 10, 224)      161504      transformer-FeedForward-Norm[0][0
+__________________________________________________________________________________________________
+dense_2 (Dense)                 (None, 10, 608)      136800      dense_1[0][0]                    
+__________________________________________________________________________________________________
+dense_3 (Dense)                 (None, 10, 224)      136416      dense_2[0][0]                    
+__________________________________________________________________________________________________
+fourth_neuron (Dense)           (None, 10, 1)        225         dense_3[0][0]                    
+__________________________________________________________________________________________________
+flatten (Flatten)               (None, 10)           0           fourth_neuron[0][0]              
+__________________________________________________________________________________________________
+predictions (Dense)             (None, 1)            11          flatten[0][0]                    
+==================================================================================================
+Total params: 34,169,836
+Trainable params: 34,169,836
+Non-trainable params: 0
+__________________________________________________________________________________________________
+
+
+

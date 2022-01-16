@@ -1,0 +1,186 @@
+Results:
+Results summary
+Results in model_outputs/LambdaMart/5/hyperparameter_tuning/transformer_Precision_mse_project
+Showing 10 best trials
+Objective(name='val_mean_squared_error', direction='min')
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 16
+feedforward_act: softmax
+final_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: d623cc4e3a5df084014870f944c8fd01
+Score: 0.1081923395395279
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 16
+feedforward_act: softmax
+final_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 28b5bd13f8970b85b2d3bce41e1a0897
+Score: 0.11275007575750351
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 8
+feedforward_act: relu
+final_activation: sigmoid
+learning_rate: 0.01
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 5db77358736a81f85b458906e40ac155
+Score: 0.1176593154668808
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 16
+feedforward_act: softmax
+final_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.11821739375591278
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 8
+feedforward_act: relu
+final_activation: sigmoid
+learning_rate: 0.01
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.11886058002710342
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 8
+feedforward_act: relu
+final_activation: sigmoid
+learning_rate: 0.01
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: 403a8517d1e82a3c44f068d826483555
+Score: 0.11953606456518173
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 8
+feedforward_act: sigmoid
+final_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 7509d4ae22b17aeeb01f2464e643107d
+Score: 0.13779665529727936
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 8
+feedforward_act: sigmoid
+final_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.1380108743906021
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 8
+feedforward_act: relu
+final_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: cf94c33642183a7e0688496a140faec0
+Score: 0.14095591008663177
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 8
+feedforward_act: relu
+final_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.14852453768253326
+
+
+Best Model Summary:
+Model: "model"
+__________________________________________________________________________________________________
+Layer (type)                    Output Shape         Param #     Connected to                     
+==================================================================================================
+main_input (InputLayer)         [(None, 10, 720)]    0                                            
+__________________________________________________________________________________________________
+transformer-MultiHeadSelfAttent (None, 10, 720)      33212880    main_input[0][0]                 
+                                                                 main_input[0][0]                 
+__________________________________________________________________________________________________
+transformer-MultiHeadSelfAttent (None, 10, 720)      0           main_input[0][0]                 
+                                                                 transformer-MultiHeadSelfAttentio
+__________________________________________________________________________________________________
+transformer-MultiHeadSelfAttent (None, 10, 720)      1440        transformer-MultiHeadSelfAttentio
+__________________________________________________________________________________________________
+transformer-FeedForward (Dense) (None, 10, 720)      519120      main_input[0][0]                 
+__________________________________________________________________________________________________
+transformer-FeedForward-Add (Ad (None, 10, 720)      0           transformer-MultiHeadSelfAttentio
+                                                                 transformer-FeedForward[0][0]    
+__________________________________________________________________________________________________
+transformer-FeedForward-Norm (L (None, 10, 720)      1440        transformer-FeedForward-Add[0][0]
+__________________________________________________________________________________________________
+flatten (Flatten)               (None, 7200)         0           transformer-FeedForward-Norm[0][0
+__________________________________________________________________________________________________
+dense_1 (Dense)                 (None, 1)            7201        flatten[0][0]                    
+==================================================================================================
+Total params: 33,742,081
+Trainable params: 33,742,081
+Non-trainable params: 0
+__________________________________________________________________________________________________
+
+
+

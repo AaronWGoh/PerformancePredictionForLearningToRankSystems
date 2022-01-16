@@ -1,0 +1,173 @@
+Results:
+Results summary
+Results in model_outputs/SVM/hyperparameter_tuning/lstm_ERR_mse_project
+Showing 10 best trials
+Objective(name='val_mean_squared_error', direction='min')
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_lstm: 736
+second_lstm: 544
+final_activation: relu
+learning_rate: 0.01
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: c42bb4462feae844a87914c2370db162
+Score: 0.16627028584480286
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_lstm: 736
+second_lstm: 544
+final_activation: relu
+learning_rate: 0.01
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: ea02843767f74a5f18d55e51f5b366d4
+Score: 0.166422039270401
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_lstm: 544
+second_lstm: 160
+final_activation: sigmoid
+learning_rate: 0.1
+tuner/epochs: 20
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.16695886850357056
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_lstm: 288
+second_lstm: 160
+final_activation: sigmoid
+learning_rate: 0.01
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: 727c14b7bcd2c97b5bdf9a0264827947
+Score: 0.1685733050107956
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_lstm: 160
+second_lstm: 96
+final_activation: relu
+learning_rate: 0.001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: 7d20e98c0bdd3ca8997a042d8c447fd9
+Score: 0.16900068521499634
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_lstm: 736
+second_lstm: 544
+final_activation: relu
+learning_rate: 0.01
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.16914287209510803
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_lstm: 288
+second_lstm: 160
+final_activation: sigmoid
+learning_rate: 0.01
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.16926054656505585
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_lstm: 160
+second_lstm: 96
+final_activation: relu
+learning_rate: 0.001
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: a84304b622bc4d3334285831b7eb9621
+Score: 0.1740492880344391
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_lstm: 160
+second_lstm: 96
+final_activation: relu
+learning_rate: 0.001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.17551326751708984
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 700
+loss: mse
+first_lstm: 544
+second_lstm: 736
+final_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 9ed66bff2121e106ad065f8679d1cfe9
+Score: 0.17830634117126465
+
+
+Best Model Summary:
+Model: "model"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+main_input (InputLayer)      [(None, 10, 700)]         0         
+_________________________________________________________________
+lstm_1 (LSTM)                (None, 10, 736)           4230528   
+_________________________________________________________________
+lstm_2 (LSTM)                (None, 544)               2787456   
+_________________________________________________________________
+dense_1 (Dense)              (None, 1)                 545       
+=================================================================
+Total params: 7,018,529
+Trainable params: 7,018,529
+Non-trainable params: 0
+_________________________________________________________________
+
+
+

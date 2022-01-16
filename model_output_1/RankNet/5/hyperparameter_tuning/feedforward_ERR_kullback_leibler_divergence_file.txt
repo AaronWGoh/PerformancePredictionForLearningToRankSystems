@@ -1,0 +1,205 @@
+Results:
+Results summary
+Results in model_outputs/RankNet/5/hyperparameter_tuning/feedforward_ERR_kullback_leibler_divergence_project
+Showing 10 best trials
+Objective(name='val_mean_squared_error', direction='min')
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 672
+first_activation: sigmoid
+second_neuron: 160
+second_activation: sigmoid
+third_neuron: 96
+final_activation: sigmoid
+output_activation: relu
+learning_rate: 1e-05
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 7844f0a4e8c211e08e37801bf439984d
+Score: 0.2284388542175293
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 288
+first_activation: sigmoid
+second_neuron: 416
+second_activation: relu
+third_neuron: 160
+final_activation: sigmoid
+output_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: 425ee72ac74aab0c3b4f360f9501d8ae
+Score: 0.23006509244441986
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 416
+first_activation: sigmoid
+second_neuron: 416
+second_activation: relu
+third_neuron: 160
+final_activation: sigmoid
+output_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: 657150b4ccd0892296b56969be7dd5ff
+Score: 0.23098652064800262
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 672
+first_activation: sigmoid
+second_neuron: 160
+second_activation: sigmoid
+third_neuron: 96
+final_activation: sigmoid
+output_activation: relu
+learning_rate: 1e-05
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.23559461534023285
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 672
+first_activation: relu
+second_neuron: 224
+second_activation: relu
+third_neuron: 288
+final_activation: softmax
+output_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: 869dcf4d58158dda6109b6f4a0ce6283
+Score: 0.2528632879257202
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 672
+first_activation: relu
+second_neuron: 224
+second_activation: relu
+third_neuron: 288
+final_activation: softmax
+output_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 8c2267bd2c9f667e5de89905e1b77002
+Score: 0.2538570165634155
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 672
+first_activation: relu
+second_neuron: 224
+second_activation: relu
+third_neuron: 288
+final_activation: softmax
+output_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.25420457124710083
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 416
+first_activation: sigmoid
+second_neuron: 416
+second_activation: relu
+third_neuron: 160
+final_activation: sigmoid
+output_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.2720755934715271
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 288
+first_activation: sigmoid
+second_neuron: 416
+second_activation: relu
+third_neuron: 160
+final_activation: sigmoid
+output_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.2740384042263031
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 480
+first_activation: relu
+second_neuron: 32
+second_activation: sigmoid
+third_neuron: 608
+final_activation: softmax
+output_activation: sigmoid
+learning_rate: 0.1
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 97eea85dd44bb94cc535c41f4a94b259
+Score: 0.32392337918281555
+
+
+Best Model Summary:
+Model: "model"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+features (InputLayer)        [(None, 21000)]           0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 672)               14112672  
+_________________________________________________________________
+dense_2 (Dense)              (None, 160)               107680    
+_________________________________________________________________
+dense_3 (Dense)              (None, 96)                15456     
+_________________________________________________________________
+predictions (Dense)          (None, 1)                 97        
+=================================================================
+Total params: 14,235,905
+Trainable params: 14,235,905
+Non-trainable params: 0
+_________________________________________________________________
+
+
+

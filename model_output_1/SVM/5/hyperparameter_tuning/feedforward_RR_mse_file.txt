@@ -1,0 +1,205 @@
+Results:
+Results summary
+Results in model_outputs/SVM/5/hyperparameter_tuning/feedforward_RR_mse_project
+Showing 10 best trials
+Objective(name='val_mean_squared_error', direction='min')
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+first_neuron: 480
+first_activation: relu
+second_neuron: 416
+second_activation: relu
+third_neuron: 288
+final_activation: relu
+output_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: fb0855eec4c8effd007ee85dce1d8c04
+Score: 0.06814533472061157
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+first_neuron: 480
+first_activation: relu
+second_neuron: 416
+second_activation: relu
+third_neuron: 288
+final_activation: relu
+output_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.06923801451921463
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+first_neuron: 160
+first_activation: sigmoid
+second_neuron: 608
+second_activation: softmax
+third_neuron: 672
+final_activation: relu
+output_activation: sigmoid
+learning_rate: 0.1
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: 9fdb38bf08d3896a89d5f5b76394525b
+Score: 0.07149448990821838
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+first_neuron: 672
+first_activation: sigmoid
+second_neuron: 32
+second_activation: relu
+third_neuron: 416
+final_activation: softmax
+output_activation: sigmoid
+learning_rate: 0.1
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.07149969041347504
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+first_neuron: 672
+first_activation: sigmoid
+second_neuron: 32
+second_activation: relu
+third_neuron: 416
+final_activation: softmax
+output_activation: sigmoid
+learning_rate: 0.1
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: bb6822bb215d5e95839a3f9b7fd893be
+Score: 0.07150618731975555
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+first_neuron: 736
+first_activation: softmax
+second_neuron: 352
+second_activation: softmax
+third_neuron: 96
+final_activation: softmax
+output_activation: sigmoid
+learning_rate: 0.1
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.07152010500431061
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+first_neuron: 160
+first_activation: sigmoid
+second_neuron: 608
+second_activation: softmax
+third_neuron: 672
+final_activation: relu
+output_activation: sigmoid
+learning_rate: 0.1
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.07153542339801788
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+first_neuron: 736
+first_activation: softmax
+second_neuron: 352
+second_activation: softmax
+third_neuron: 96
+final_activation: softmax
+output_activation: sigmoid
+learning_rate: 0.1
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: e98866d77c73431d8dc51fff00dd8642
+Score: 0.07154086232185364
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+first_neuron: 672
+first_activation: sigmoid
+second_neuron: 32
+second_activation: relu
+third_neuron: 416
+final_activation: softmax
+output_activation: sigmoid
+learning_rate: 0.1
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: d5d425316b99846b865b99707d7f2273
+Score: 0.07154101878404617
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+first_neuron: 736
+first_activation: softmax
+second_neuron: 352
+second_activation: softmax
+third_neuron: 96
+final_activation: softmax
+output_activation: sigmoid
+learning_rate: 0.1
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: 2ed941f6341d65e353e6a59ba4d54f39
+Score: 0.07154560834169388
+
+
+Best Model Summary:
+Model: "model"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+features (InputLayer)        [(None, 21000)]           0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 480)               10080480  
+_________________________________________________________________
+dense_2 (Dense)              (None, 416)               200096    
+_________________________________________________________________
+dense_3 (Dense)              (None, 288)               120096    
+_________________________________________________________________
+predictions (Dense)          (None, 1)                 289       
+=================================================================
+Total params: 10,400,961
+Trainable params: 10,400,961
+Non-trainable params: 0
+_________________________________________________________________
+
+
+

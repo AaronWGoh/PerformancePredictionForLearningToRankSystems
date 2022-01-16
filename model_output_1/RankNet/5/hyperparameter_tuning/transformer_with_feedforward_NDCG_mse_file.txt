@@ -1,0 +1,264 @@
+Results:
+Results summary
+Results in operational/RankNet/5/hyperparameter_tuning/transformer_with_feedforward_NDCG_mse_project
+Showing 10 best trials
+Objective(name='val_mean_squared_error', direction='min')
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 8
+feedforward_act: softmax
+first_neuron: 32
+first_activation: relu
+second_neuron: 416
+second_activation: softmax
+third_neuron: 480
+third_activation: relu
+fourth_activation: relu
+output_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: 59a8e4fcba3470974c2586eb61fea154
+Score: 0.0567648708820343
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 16
+feedforward_act: softmax
+first_neuron: 224
+first_activation: relu
+second_neuron: 160
+second_activation: sigmoid
+third_neuron: 352
+third_activation: softmax
+fourth_activation: relu
+output_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.056765925139188766
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 16
+feedforward_act: softmax
+first_neuron: 224
+first_activation: relu
+second_neuron: 160
+second_activation: sigmoid
+third_neuron: 352
+third_activation: softmax
+fourth_activation: relu
+output_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: f1978f5f289cc38d519030b4e448fd0b
+Score: 0.05676593631505966
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 8
+feedforward_act: softmax
+first_neuron: 32
+first_activation: relu
+second_neuron: 416
+second_activation: softmax
+third_neuron: 480
+third_activation: relu
+fourth_activation: relu
+output_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 1cb8a0db6b74829f98b0e4f9ef11b160
+Score: 0.05676669627428055
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 8
+feedforward_act: softmax
+first_neuron: 32
+first_activation: relu
+second_neuron: 416
+second_activation: softmax
+third_neuron: 480
+third_activation: relu
+fourth_activation: relu
+output_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.05676700547337532
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 8
+feedforward_act: relu
+first_neuron: 544
+first_activation: sigmoid
+second_neuron: 672
+second_activation: relu
+third_neuron: 224
+third_activation: sigmoid
+fourth_activation: relu
+output_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: ba4eb3cddbbcd3c68d3a62ad9bc64666
+Score: 0.05676785856485367
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 8
+feedforward_act: tanh
+first_neuron: 160
+first_activation: sigmoid
+second_neuron: 224
+second_activation: relu
+third_neuron: 672
+third_activation: softmax
+fourth_activation: softmax
+output_activation: sigmoid
+learning_rate: 0.01
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.0568501241505146
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 8
+feedforward_act: tanh
+first_neuron: 160
+first_activation: sigmoid
+second_neuron: 224
+second_activation: relu
+third_neuron: 672
+third_activation: softmax
+fourth_activation: softmax
+output_activation: sigmoid
+learning_rate: 0.01
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 2a557ce9d0d6c415105b3b499763669f
+Score: 0.05686920881271362
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 8
+feedforward_act: softmax
+first_neuron: 96
+first_activation: sigmoid
+second_neuron: 32
+second_activation: relu
+third_neuron: 96
+third_activation: softmax
+fourth_activation: softmax
+output_activation: relu
+learning_rate: 0.0001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: 8e525c94621e53ec178bf024c9adac64
+Score: 0.0569673553109169
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 720
+loss: mse
+num_heads: 8
+feedforward_act: softmax
+first_neuron: 96
+first_activation: sigmoid
+second_neuron: 32
+second_activation: relu
+third_neuron: 96
+third_activation: softmax
+fourth_activation: softmax
+output_activation: relu
+learning_rate: 0.0001
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.056998174637556076
+
+
+Best Model Summary:
+Model: "model"
+__________________________________________________________________________________________________
+Layer (type)                    Output Shape         Param #     Connected to                     
+==================================================================================================
+main_input (InputLayer)         [(None, 10, 720)]    0                                            
+__________________________________________________________________________________________________
+transformer-MultiHeadSelfAttent (None, 10, 720)      16606800    main_input[0][0]                 
+                                                                 main_input[0][0]                 
+__________________________________________________________________________________________________
+transformer-MultiHeadSelfAttent (None, 10, 720)      0           main_input[0][0]                 
+                                                                 transformer-MultiHeadSelfAttentio
+__________________________________________________________________________________________________
+transformer-MultiHeadSelfAttent (None, 10, 720)      1440        transformer-MultiHeadSelfAttentio
+__________________________________________________________________________________________________
+transformer-FeedForward (Dense) (None, 10, 720)      519120      main_input[0][0]                 
+__________________________________________________________________________________________________
+transformer-FeedForward-Add (Ad (None, 10, 720)      0           transformer-MultiHeadSelfAttentio
+                                                                 transformer-FeedForward[0][0]    
+__________________________________________________________________________________________________
+transformer-FeedForward-Norm (L (None, 10, 720)      1440        transformer-FeedForward-Add[0][0]
+__________________________________________________________________________________________________
+dense_1 (Dense)                 (None, 10, 32)       23072       transformer-FeedForward-Norm[0][0
+__________________________________________________________________________________________________
+dense_2 (Dense)                 (None, 10, 416)      13728       dense_1[0][0]                    
+__________________________________________________________________________________________________
+dense_3 (Dense)                 (None, 10, 480)      200160      dense_2[0][0]                    
+__________________________________________________________________________________________________
+fourth_neuron (Dense)           (None, 10, 1)        481         dense_3[0][0]                    
+__________________________________________________________________________________________________
+flatten (Flatten)               (None, 10)           0           fourth_neuron[0][0]              
+__________________________________________________________________________________________________
+predictions (Dense)             (None, 1)            11          flatten[0][0]                    
+==================================================================================================
+Total params: 17,366,252
+Trainable params: 17,366,252
+Non-trainable params: 0
+__________________________________________________________________________________________________
+
+
+

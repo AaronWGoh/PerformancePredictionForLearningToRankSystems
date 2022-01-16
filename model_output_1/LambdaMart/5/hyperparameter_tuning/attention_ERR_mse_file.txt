@@ -1,0 +1,175 @@
+Results:
+Results summary
+Results in model_outputs/LambdaMart/5/hyperparameter_tuning/attention_ERR_mse_project
+Showing 10 best trials
+Objective(name='val_mean_squared_error', direction='min')
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 710
+loss: mse
+output_dense_size: 480
+final_activation: sigmoid
+learning_rate: 0.1
+tuner/epochs: 20
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.1906946897506714
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 710
+loss: mse
+output_dense_size: 736
+final_activation: relu
+learning_rate: 0.001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: 9f11b96d99d1b67c9517347bbc1038f2
+Score: 0.19098183512687683
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 710
+loss: mse
+output_dense_size: 96
+final_activation: sigmoid
+learning_rate: 0.001
+tuner/epochs: 20
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.19407662749290466
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 710
+loss: mse
+output_dense_size: 608
+final_activation: relu
+learning_rate: 0.001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: 19f5af7eb16af81b49854450f9fbbb04
+Score: 0.1973019540309906
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 710
+loss: mse
+output_dense_size: 736
+final_activation: relu
+learning_rate: 0.001
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 7bc41355ffab682e5ede3f2041e1d4d9
+Score: 0.20087063312530518
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 710
+loss: mse
+output_dense_size: 608
+final_activation: relu
+learning_rate: 0.001
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: dbb18d28d0c619b35aa23d0bec39a3ec
+Score: 0.20219720900058746
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 710
+loss: mse
+output_dense_size: 736
+final_activation: relu
+learning_rate: 0.001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.2031439244747162
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 710
+loss: mse
+output_dense_size: 608
+final_activation: relu
+learning_rate: 0.001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.20496945083141327
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 710
+loss: mse
+output_dense_size: 480
+final_activation: relu
+learning_rate: 0.0001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: 3ebf5ebf1330d8b1272f47e1cd524210
+Score: 0.21502645313739777
+Trial summary
+Hyperparameters:
+num_batches: 10
+num_features: 710
+loss: mse
+output_dense_size: 480
+final_activation: relu
+learning_rate: 0.0001
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.2207747846841812
+
+
+Best Model Summary:
+Model: "model"
+__________________________________________________________________________________________________
+Layer (type)                    Output Shape         Param #     Connected to                     
+==================================================================================================
+main_input (InputLayer)         [(None, 10, 710)]    0                                            
+__________________________________________________________________________________________________
+attention_score_vec (Dense)     (None, 10, 710)      504100      main_input[0][0]                 
+__________________________________________________________________________________________________
+last_hidden_state (Lambda)      (None, 710)          0           main_input[0][0]                 
+__________________________________________________________________________________________________
+attention_score (Dot)           (None, 10)           0           attention_score_vec[0][0]        
+                                                                 last_hidden_state[0][0]          
+__________________________________________________________________________________________________
+attention_weight (Activation)   (None, 10)           0           attention_score[0][0]            
+__________________________________________________________________________________________________
+context_vector (Dot)            (None, 710)          0           main_input[0][0]                 
+                                                                 attention_weight[0][0]           
+__________________________________________________________________________________________________
+attention_output (Concatenate)  (None, 1420)         0           context_vector[0][0]             
+                                                                 last_hidden_state[0][0]          
+__________________________________________________________________________________________________
+attention_vector (Dense)        (None, 480)          681600      attention_output[0][0]           
+__________________________________________________________________________________________________
+dense_1 (Dense)                 (None, 1)            481         attention_vector[0][0]           
+==================================================================================================
+Total params: 1,186,181
+Trainable params: 1,186,181
+Non-trainable params: 0
+__________________________________________________________________________________________________
+
+
+

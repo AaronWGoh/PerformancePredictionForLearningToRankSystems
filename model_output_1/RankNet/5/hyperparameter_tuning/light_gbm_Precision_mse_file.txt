@@ -1,0 +1,153 @@
+Results:
+Results summary
+Results in model_outputs/RankNet/5/hyperparameter_tuning/light_gbm_Precision_mse_project
+Showing 10 best trials
+Objective(name='score', direction='min')
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+num_leaves: 38
+min_child_samples: 300
+min_child_weight: 1e-05
+max_depth: 60
+reg_alpha: 1.0
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.09181178688796326
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+num_leaves: 38
+min_child_samples: 300
+min_child_weight: 1e-05
+max_depth: 60
+reg_alpha: 1.0
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: 330d6f6e9d8658d25e2e7f69d17b76ee
+Score: 0.09181178688796326
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+num_leaves: 42
+min_child_samples: 460
+min_child_weight: 1.0
+max_depth: 90
+reg_alpha: 0.001
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.09199547619225193
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+num_leaves: 42
+min_child_samples: 460
+min_child_weight: 1.0
+max_depth: 90
+reg_alpha: 0.001
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: a7aaa99b335bb25e2b151851fec3bc7e
+Score: 0.09199547619225193
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+num_leaves: 42
+min_child_samples: 460
+min_child_weight: 1.0
+max_depth: 90
+reg_alpha: 0.001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: dd197a8ef1fc08d48494c7a94efa515b
+Score: 0.09199547619225193
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+num_leaves: 34
+min_child_samples: 440
+min_child_weight: 1e-05
+max_depth: 90
+reg_alpha: 0.0
+tuner/epochs: 20
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.09201743824466706
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+num_leaves: 46
+min_child_samples: 280
+min_child_weight: 0.1
+max_depth: 90
+reg_alpha: 1e-05
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.0920279084187983
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+num_leaves: 46
+min_child_samples: 280
+min_child_weight: 0.1
+max_depth: 90
+reg_alpha: 1e-05
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 26108d9e5cd02974f2fe92a1cb2bfa03
+Score: 0.0920279084187983
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+num_leaves: 46
+min_child_samples: 280
+min_child_weight: 0.1
+max_depth: 90
+reg_alpha: 1e-05
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: f687e874f13dbe1c0947e3a2abf775b5
+Score: 0.0920279084187983
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: mse
+num_leaves: 42
+min_child_samples: 420
+min_child_weight: 1.0
+max_depth: 80
+reg_alpha: 0.001
+tuner/epochs: 20
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.09211121553795379
+
+
+

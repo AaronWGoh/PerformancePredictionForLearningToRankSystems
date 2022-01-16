@@ -1,0 +1,204 @@
+Results:
+Results summary
+Results in model_outputs/SVM/hyperparameter_tuning/feedforward_RR_kullback_leibler_divergence_project
+Showing 10 best trials
+Objective(name='val_mean_squared_error', direction='min')
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 672
+first_activation: softmax
+second_neuron: 736
+second_activation: softmax
+third_neuron: 224
+final_activation: relu
+output_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.05333834886550903
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 672
+first_activation: softmax
+second_neuron: 736
+second_activation: softmax
+third_neuron: 224
+final_activation: relu
+output_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: 79727f47b347abb42d86d63d539e2713
+Score: 0.05338301882147789
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 288
+first_activation: softmax
+second_neuron: 224
+second_activation: sigmoid
+third_neuron: 288
+final_activation: sigmoid
+output_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.053900185972452164
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 224
+first_activation: sigmoid
+second_neuron: 160
+second_activation: softmax
+third_neuron: 288
+final_activation: sigmoid
+output_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.07569362223148346
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 288
+first_activation: softmax
+second_neuron: 224
+second_activation: sigmoid
+third_neuron: 288
+final_activation: sigmoid
+output_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: dfb4cbd42c18d3c58299d4f60829e3a1
+Score: 0.07805108278989792
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 288
+first_activation: softmax
+second_neuron: 224
+second_activation: sigmoid
+third_neuron: 288
+final_activation: sigmoid
+output_activation: sigmoid
+learning_rate: 1e-05
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 2
+tuner/round: 2
+tuner/trial_id: f0b46102fbcca5d99626028f574fb786
+Score: 0.0900827944278717
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 352
+first_activation: relu
+second_neuron: 160
+second_activation: relu
+third_neuron: 416
+final_activation: relu
+output_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 20
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.10365447402000427
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 224
+first_activation: sigmoid
+second_neuron: 160
+second_activation: softmax
+third_neuron: 288
+final_activation: sigmoid
+output_activation: sigmoid
+learning_rate: 0.0001
+tuner/epochs: 20
+tuner/initial_epoch: 7
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: bd18b3250e497d8726e62a3751791412
+Score: 0.17840850353240967
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 608
+first_activation: sigmoid
+second_neuron: 96
+second_activation: sigmoid
+third_neuron: 160
+final_activation: softmax
+output_activation: relu
+learning_rate: 0.01
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 2
+tuner/round: 0
+Score: 0.25165465474128723
+Trial summary
+Hyperparameters:
+total_num_features_per_row: 21000
+loss: kullback_leibler_divergence
+first_neuron: 608
+first_activation: sigmoid
+second_neuron: 96
+second_activation: sigmoid
+third_neuron: 160
+final_activation: softmax
+output_activation: relu
+learning_rate: 0.01
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 2
+tuner/round: 1
+tuner/trial_id: 8ea7d1fcbd42ae26fe9870201acbbf85
+Score: 0.25165465474128723
+
+
+Best Model Summary:
+Model: "model"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+features (InputLayer)        [(None, 21000)]           0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 672)               14112672  
+_________________________________________________________________
+dense_2 (Dense)              (None, 736)               495328    
+_________________________________________________________________
+dense_3 (Dense)              (None, 224)               165088    
+_________________________________________________________________
+predictions (Dense)          (None, 1)                 225       
+=================================================================
+Total params: 14,773,313
+Trainable params: 14,773,313
+Non-trainable params: 0
+_________________________________________________________________
+
+
+
